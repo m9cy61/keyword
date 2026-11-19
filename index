@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO 標題與關鍵字生成器</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #0f172a;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .optional {
+            font-weight: normal;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            height: 160px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        button.btn-primary {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        button.btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .result-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed #e2e8f0;
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-header h2 {
+            font-size: 1.15rem;
+        }
+
+        button.btn-copy {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.85rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.btn-copy:hover {
+            background-color: #059669;
+        }
+
+        pre {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+            font-size: 0.95rem;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SEO 標題與關鍵字生成器</h1>
+    
+    <div class="form-group">
+        <label for="companyName">公司名稱</label>
+        <input type="text" id="companyName" placeholder="例如：XX企業社">
+    </div>
+
+    <div class="form-group">
+        <label for="city">服務範圍 (縣市)</label>
+        <input type="text" id="city" placeholder="例如：台北">
+    </div>
+
+    <div class="row">
+        <div class="form-group">
+            <label for="district1">小組關鍵字 1</label>
+            <input type="text" id="district1" placeholder="例如：中山區">
+        </div>
+
+        <div class="form-group">
+            <label for="district2">小組關鍵字 2 <span class="optional">(可空白)</span></label>
+            <input type="text" id="district2" placeholder="例如：大安區">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="items">營業項目 <span class="optional">(每行一個項目)</span></label>
+        <textarea id="items" placeholder="請輸入營業項目，每行一個項目&#10;例如：&#10;冷氣清洗&#10;洗衣機清洗&#10;水管清洗"></textarea>
+    </div>
+
+    <button class="btn-primary" onclick="handleGenerate()">生成內容</button>
+
+    <div class="result-section" id="resultSection">
+        <div class="result-header">
+            <h2>生成結果</h2>
+            <button class="btn-copy" id="copyBtn" onclick="copyResult()">複製全部內容</button>
+        </div>
+        <pre id="output"></pre>
+    </div>
+</div>
+
+<script>
+    function generateContent(name, city, district1, district2, items) {
+        // 生成 Title 抬頭
+        let title = `<Title抬頭>${name}-${items[0]},${city}${items[0]},${district1}${items[0]}`;
+        if (district2) {
+            title += `,${district2}${items[0]}`;
+        }
+
+        // 生成 Keywords 關鍵字
+        let keywords = "<Keywords關鍵字>：\n";
+        items.forEach(item => {
+            if (district2) {
+                keywords += `${item},${city}${item},${district1}${item},${district2}${item}\n`;
+            } else {
+                keywords += `${item},${city}${item},${district1}${item}\n`;
+            }
+        });
+
+        return { title, keywords };
+    }
+
+    function handleGenerate() {
+        const name = document.getElementById('companyName').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const district1 = document.getElementById('district1').value.trim();
+        const district2 = document.getElementById('district2').value.trim();
+        const itemsRaw = document.getElementById('items').value;
+
+        // 將多行輸入轉換為陣列，並過濾掉前後空白與空行
+        const items = itemsRaw
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+
+        if (!name || !city || !district1 || items.length === 0) {
+            alert("請完整填寫「公司名稱」、「服務範圍」、「小組關鍵字 1」以及至少一項「營業項目」！");
+            return;
+        }
+
+        const { title, keywords } = generateContent(name, city, district1, district2, items);
+        
+        const outputElement = document.getElementById('output');
+        outputElement.textContent = `${title}\n${keywords}`;
+        
+        document.getElementById('resultSection').style.display = 'block';
+    }
+
+    function copyResult() {
+        const outputText = document.getElementById('output').textContent;
+        navigator.clipboard.writeText(outputText).then(() => {
+            const copyBtn = document.getElementById('copyBtn');
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = '已複製！';
+            copyBtn.style.backgroundColor = '#059669';
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.backgroundColor = '#10b981';
+            }, 2000);
+        }).catch(err => {
+            alert('複製失敗，請手動選取文字複製。');
+        });
+    }
+</script>
+
+</body>
+</html>
