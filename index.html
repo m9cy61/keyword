@@ -8,6 +8,8 @@
         :root {
             --primary-color: #2563eb;
             --primary-hover: #1d4ed8;
+            --secondary-color: #64748b;
+            --secondary-hover: #475569;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-color: #1e293b;
@@ -87,14 +89,23 @@
             gap: 1rem;
         }
 
+        .button-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
         @media (max-width: 600px) {
             .row {
                 grid-template-columns: 1fr;
             }
+            .button-group {
+                flex-direction: column;
+            }
         }
 
         button.btn-primary {
-            width: 100%;
+            flex: 2;
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -104,11 +115,27 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.2s;
-            margin-top: 0.5rem;
         }
 
         button.btn-primary:hover {
             background-color: var(--primary-hover);
+        }
+
+        button.btn-clear {
+            flex: 1;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.btn-clear:hover {
+            background-color: var(--secondary-hover);
         }
 
         .result-section {
@@ -190,7 +217,10 @@
         <textarea id="items" placeholder="請輸入營業項目，每行一個項目&#10;例如：&#10;冷氣清洗&#10;洗衣機清洗&#10;水管清洗"></textarea>
     </div>
 
-    <button class="btn-primary" onclick="handleGenerate()">生成內容</button>
+    <div class="button-group">
+        <button class="btn-primary" onclick="handleGenerate()">生成內容</button>
+        <button class="btn-clear" onclick="handleClear()">清除資料</button>
+    </div>
 
     <div class="result-section" id="resultSection">
         <div class="result-header">
@@ -246,6 +276,22 @@
         outputElement.textContent = `${title}\n${keywords}`;
         
         document.getElementById('resultSection').style.display = 'block';
+    }
+
+    function handleClear() {
+        // 清空所有輸入框
+        document.getElementById('companyName').value = '';
+        document.getElementById('city').value = '';
+        document.getElementById('district1').value = '';
+        document.getElementById('district2').value = '';
+        document.getElementById('items').value = '';
+        
+        // 清空並隱藏生成結果區塊
+        document.getElementById('output').textContent = '';
+        document.getElementById('resultSection').style.display = 'none';
+        
+        // 將游標自動移回第一個輸入框，方便直接輸入下一筆
+        document.getElementById('companyName').focus();
     }
 
     function copyResult() {
